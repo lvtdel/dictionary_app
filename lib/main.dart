@@ -1,4 +1,5 @@
 import 'package:directory_app/core/locator/locator.dart';
+import 'package:directory_app/core/routering/go_router.dart';
 import 'package:directory_app/presentation/search/bloc/search_bloc.dart';
 import 'package:directory_app/presentation/search/pages/search_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +16,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BlocProvider(
-        create: (context) => SearchBloc(),
-        child: SearchScreen(),
-      ),
+
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
     );
   }

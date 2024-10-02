@@ -17,7 +17,7 @@ class WordRepositoryImpl extends WordRepository {
   Future<List<String>> find(String word) async {
     var searchRes = await sl<RestClient>().getSearch(word: word);
 
-    print(searchRes.toJson());
+    // print(searchRes.toJson());
     return searchRes.suggestions!.map((item) {
       var translation = item.data?.split('p>')[1].replaceAll('</', '');
       return "${item.select!} - ${translation!}";

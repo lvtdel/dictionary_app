@@ -10,18 +10,14 @@ part 'search_event.dart';
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  SearchEvent? lastEvent;
+  SearchEvent? lastWordSearchEvent;
 
   SearchBloc() : super(SearchInitial()) {
-    on<SearchEvent>((event, emit) {
-      lastEvent = event;
-    });
-
     on<WordSearchChangeEvent>(_onWordChangeEvent);
   }
 
   _onWordChangeEvent(event, emit) async {
-    var currentEvent = event;
+    lastWordSearchEvent = event;
     String word = event.word;
 
     print("Word change: $word");
@@ -31,11 +27,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       emit(SearchInitial());
     } else {
+      var currentWordSearchEvent = event;
+      emit(SearchLoading());
       var wordList = await _fetch(word);
 
       // Xử lý khi người dùng đã thay đổi từ khoá tìm kiếm
       // mà data cũ trả về thì không chấp nhận
-      if (currentEvent == lastEvent) {
+      if (currentWordSearchEvent == lastWordSearchEvent) {
         emit(SearchSuccess(wordList));
       }
     }
