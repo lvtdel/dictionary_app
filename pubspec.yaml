@@ -38,6 +38,7 @@ dependencies:
   logger:
   json_annotation:
   go_router:
+  url_launcher:
 
 
   # The following adds the Cupertino Icons font to your application.

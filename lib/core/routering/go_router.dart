@@ -1,6 +1,7 @@
 import 'package:directory_app/presentation/search/bloc/search_bloc.dart';
 import 'package:directory_app/presentation/search/pages/search_screen.dart';
-import 'package:directory_app/presentation/splash_screen.dart';
+import 'package:directory_app/presentation/splash/splash_screen.dart';
+import 'package:directory_app/presentation/word_detail/pages/word_detail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,9 @@ import 'package:go_router/go_router.dart';
 final router = GoRouter(initialLocation: "/splash", routes: [
   GoRoute(path: "/splash", builder: (context, state) => const SplashScreen()),
   GoRoute(path: "/", pageBuilder: (context, state) => _buildSearchScreen()),
+  GoRoute(path: "/details/:word", builder: (context, state) {
+    return WordDetailScreen(word: state.pathParameters['word']!);
+  })
 ]);
 
 _buildSearchScreen() {
