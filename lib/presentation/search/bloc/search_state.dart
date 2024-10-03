@@ -10,7 +10,7 @@ final class SearchLoading extends SearchState {}
 final class SearchSuccess extends SearchState {
   SearchSuccess(this.result);
 
-  final List<String> result;
+  final List<Translation> result;
 }
 
 final class SearchFail extends SearchState {

@@ -7,8 +7,14 @@ class WordDetailScreen extends StatelessWidget {
 
   final String word;
 
-  Future<void> _launchUrl() async {
-    String link = "${HostConstants.labanHost}find?type=1&query=$word";
+  Future<void> _launchUrl(BuildContext context) async {
+    // Mobile sẽ sử dụng link khác, nhưng web laban redirect không đúng
+    // Tự redirect bằng tay
+    String link = (MediaQuery.of(context).size.width > 600)
+        ? "${HostConstants.labanHost}find?type=1&query=$word"
+        : "${HostConstants.labanHostMobile}en_vn/find?keyword=$word";
+
+    print("Open link: $link");
 
     Uri url = Uri.parse(link);
 
@@ -21,7 +27,7 @@ class WordDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _launchUrl();
+    _launchUrl(context);
     return Placeholder();
   }
 }

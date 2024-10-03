@@ -1,11 +1,13 @@
 import 'package:directory_app/core/locator/locator.dart';
 import 'package:directory_app/core/usecase/usecase.dart';
-import 'package:directory_app/domain/repositories/word_repository.dart';
+import 'package:directory_app/domain/entities/Translation.dart';
+import 'package:directory_app/domain/entities/Translation.dart';
+import 'package:directory_app/domain/repositories/translation_repository.dart';
 
-class SearchUseCase implements UseCase<List<String>, String> {
+class SearchUseCase implements UseCase<List<Translation>, String> {
   @override
-  Future<List<String>> call({String? params}) {
-    return sl<WordRepository>().find(params!);
+  Future<List<Translation>> call({String? params}) {
+    return sl<TranslationRepository>().find(params!);
     throw UnimplementedError();
   }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:directory_app/common/constants/host.dart';
 import 'package:directory_app/core/routering/go_router.dart';
+import 'package:directory_app/domain/entities/Translation.dart';
 import 'package:directory_app/presentation/search/bloc/search_bloc.dart';
 import 'package:directory_app/presentation/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -64,22 +65,24 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _launchBrowser(String word) async {
-    String link = "${HostConstants.labanHost}find?type=1&query=$word";
+  Future<void> _launchBrowser(BuildContext context, String word) async {
+    // Mobile sẽ sử dụng link khác, nhưng web laban redirect không đúng
+    // Tự redirect bằng tay
+    String link = (MediaQuery.of(context).size.width > 600)
+        ? "${HostConstants.labanHost}find?type=1&query=$word"
+        : "${HostConstants.labanHostMobile}en_vn/find?keyword=$word";
+
+    print("Open link: $link");
 
     Uri url = Uri.parse(link);
 
-    // if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    // } else {
-    //   throw 'Could not launch $url';
-    // }
+    await launchUrl(url);
   }
 
   _resultList(context) {
     return SizedBox(
-      height: 400,
-      width: 300,
+      height: 500,
+      width: 350,
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is SearchInitial) {
@@ -94,22 +97,20 @@ class SearchScreen extends StatelessWidget {
           }
 
           if (state is SearchSuccess) {
-            var wordList = state.result;
-            if (wordList.isEmpty) {
-              wordList.add("Word is not found");
+            var translationList = state.result;
+            if (translationList.isEmpty) {
+              return const Align(alignment: Alignment.topCenter, child: Text("Word is not found"));
             }
 
             return ListView.separated(
-              itemCount: wordList.length,
+              itemCount: translationList.length,
               itemBuilder: (context, index) {
-                // Từ khoá ban đầu, không bao gồm dịch
-                String keyWord = wordList[index].split("-").first;
+                var translation = translationList[index];
 
                 return ListTile(
-                  // onTap: () => context.go("/details/$keyWord"),
-                  onTap: () => _launchBrowser(keyWord),
-                  title: Text(wordList[index]),
-                );
+                    // onTap: () => context.go("/details/$keyWord"),
+                    onTap: () => _launchBrowser(context, translation.word),
+                    title: _translationItem(translation));
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const Divider(
@@ -122,6 +123,28 @@ class SearchScreen extends StatelessWidget {
           return const SizedBox();
         },
       ),
+    );
+  }
+
+  Widget _translationItem(Translation translation) {
+    var word = translation.word;
+    var translated = translation.translated;
+
+    var firstChar = word[0];
+    word = word.replaceFirst(firstChar, firstChar.toUpperCase());
+
+    return RichText(
+      text: TextSpan(children: [
+        TextSpan(
+            text: "$word ",
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 18)),
+        TextSpan(
+            text: translated,
+            style: const TextStyle(color: Colors.black, fontSize: 18)),
+      ]),
     );
   }
 }
