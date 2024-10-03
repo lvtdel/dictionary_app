@@ -92,7 +92,7 @@ class SearchScreen extends StatelessWidget {
           if (state is SearchLoading) {
             return const Center(
               child: SizedBox(
-                  height: 100, width: 100, child: CircularProgressIndicator()),
+                  height: 50, width: 50, child: CircularProgressIndicator()),
             );
           }
 
