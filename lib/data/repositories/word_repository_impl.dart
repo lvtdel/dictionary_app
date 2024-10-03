@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:directory_app/core/locator/locator.dart';
+import 'package:directory_app/data/exceptions/network_exception.dart';
 import 'package:directory_app/data/remote/data_sources/service/search_api_service.dart';
 import 'package:directory_app/domain/entities/Translation.dart';
 import 'package:directory_app/domain/repositories/translation_repository.dart';
@@ -31,10 +32,4 @@ class WordRepositoryImpl extends TranslationRepository {
     // print(searchRes.toJson());
     // TODO: Cần check null
   }
-}
-
-class NetworkException {
-  String mess;
-
-  NetworkException(this.mess);
 }

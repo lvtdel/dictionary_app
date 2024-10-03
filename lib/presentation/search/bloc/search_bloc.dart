@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:directory_app/core/locator/locator.dart';
+import 'package:directory_app/data/exceptions/network_exception.dart';
 import 'package:directory_app/data/repositories/word_repository_impl.dart';
 import 'package:directory_app/domain/entities/Translation.dart';
 import 'package:directory_app/domain/use_cases/search_usecase.dart';
