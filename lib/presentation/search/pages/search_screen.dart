@@ -96,10 +96,17 @@ class SearchScreen extends StatelessWidget {
             );
           }
 
+          if (state is SearchFail) {
+            return Align(
+                alignment: Alignment.topCenter, child: Text(state.errorMess));
+          }
+
           if (state is SearchSuccess) {
             var translationList = state.result;
             if (translationList.isEmpty) {
-              return const Align(alignment: Alignment.topCenter, child: Text("Word is not found"));
+              return const Align(
+                  alignment: Alignment.topCenter,
+                  child: Text("Word is not found"));
             }
 
             return ListView.separated(

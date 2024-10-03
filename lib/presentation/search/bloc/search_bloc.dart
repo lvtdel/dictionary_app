@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:directory_app/core/locator/locator.dart';
+import 'package:directory_app/data/repositories/word_repository_impl.dart';
 import 'package:directory_app/domain/entities/Translation.dart';
 import 'package:directory_app/domain/use_cases/search_usecase.dart';
 import 'package:meta/meta.dart';
@@ -28,14 +29,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       emit(SearchInitial());
     } else {
-      var currentWordSearchEvent = event;
-      emit(SearchLoading());
-      var translationList = await _fetch(word);
+      try {
+        var currentWordSearchEvent = event;
+        emit(SearchLoading());
+        var translationList = await _fetch(word);
 
-      // Xử lý khi người dùng đã thay đổi từ khoá tìm kiếm
-      // mà data cũ trả về thì không chấp nhận
-      if (currentWordSearchEvent == lastWordSearchEvent) {
-        emit(SearchSuccess(translationList));
+        // Xử lý khi người dùng đã thay đổi từ khoá tìm kiếm
+        // mà data cũ trả về thì không chấp nhận
+        if (currentWordSearchEvent == lastWordSearchEvent) {
+          emit(SearchSuccess(translationList));
+        }
+      }
+      on NetworkException catch (e) {
+        emit(SearchFail(e.mess));
       }
     }
   }

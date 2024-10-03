@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:directory_app/core/locator/locator.dart';
 import 'package:directory_app/data/remote/data_sources/service/search_api_service.dart';
 import 'package:directory_app/domain/entities/Translation.dart';
@@ -16,15 +17,24 @@ class WordRepositoryImpl extends TranslationRepository {
 
   @override
   Future<List<Translation>> find(String word) async {
-    var searchRes = await sl<RestClient>().getSearch(word: word);
+    try {
+      var searchRes = await sl<RestClient>().getSearch(word: word);
 
+      return searchRes.suggestions!.map((item) {
+        var word = item.select;
+        var translated = item.data?.split('p>')[1].replaceAll('</', '');
+        return Translation(word: word ?? "", translated: translated ?? "");
+      }).toList();
+    } on DioException {
+      throw NetworkException("No internet connection or server error!");
+    }
     // print(searchRes.toJson());
-    return searchRes.suggestions!.map((item) {
-      var word = item.select;
-      var translated = item.data?.split('p>')[1].replaceAll('</', '');
-      return Translation(word: word ?? "", translated: translated ?? "");
-    }).toList();
-
     // TODO: Cần check null
   }
+}
+
+class NetworkException {
+  String mess;
+
+  NetworkException(this.mess);
 }
