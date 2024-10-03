@@ -80,9 +80,14 @@ class SearchScreen extends StatelessWidget {
   }
 
   _resultList(context) {
-    return SizedBox(
+    return Container(
       height: 500,
       width: 350,
+      decoration: BoxDecoration(
+          // border: Border.all(),
+          borderRadius: BorderRadius.circular(10)
+      ),
+      clipBehavior: Clip.hardEdge,
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is SearchInitial) {
@@ -114,15 +119,16 @@ class SearchScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 var translation = translationList[index];
 
-                return ListTile(
+                return GestureDetector(
                     // onTap: () => context.go("/details/$keyWord"),
                     onTap: () => _launchBrowser(context, translation.word),
-                    title: _translationItem(translation));
+                    child: _translationItem(translation));
               },
               separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  height: 1,
-                );
+                // return const Divider(
+                //   height: 1,
+                // );
+                return const SizedBox(height: 10,);
               },
             );
           }
@@ -140,18 +146,24 @@ class SearchScreen extends StatelessWidget {
     var firstChar = word[0];
     word = word.replaceFirst(firstChar, firstChar.toUpperCase());
 
-    return RichText(
-      text: TextSpan(children: [
-        TextSpan(
-            text: "$word ",
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontSize: 18)),
-        TextSpan(
-            text: translated,
-            style: const TextStyle(color: Colors.black, fontSize: 18)),
-      ]),
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: RichText(
+          text: TextSpan(children: [
+            TextSpan(
+                text: "$word ",
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 18)),
+            TextSpan(
+                text: translated,
+                style: const TextStyle(color: Colors.black, fontSize: 18)),
+          ]),
+        ),
+      ),
     );
   }
 }
