@@ -14,7 +14,7 @@ class _RestClient implements RestClient {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://dict.laban.vn/ajax/autocomplete';
+    baseUrl ??= 'https://dict.laban.vn/';
   }
 
   final Dio _dio;
@@ -44,7 +44,7 @@ class _RestClient implements RestClient {
     )
         .compose(
           _dio.options,
-          '',
+          'ajax/autocomplete',
           queryParameters: queryParameters,
           data: _data,
         )

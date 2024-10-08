@@ -21,20 +21,24 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar('Search'),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            _textFieldSearch(context),
-            const SizedBox(
-              height: 40,
-            ),
-            _resultList(context)
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(
+            height: 40,
+          ),
+          _textFieldSearch(context),
+          const SizedBox(
+            height: 20,
+          ),
+          Flexible(
+            fit: FlexFit.loose,
+              child: _resultList(context)
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
       ),
     );
   }
@@ -81,17 +85,20 @@ class SearchScreen extends StatelessWidget {
 
   _resultList(context) {
     return Container(
-      height: 500,
+      // height: 500,
       width: 350,
       decoration: BoxDecoration(
           // border: Border.all(),
-          borderRadius: BorderRadius.circular(10)
-      ),
+          borderRadius: BorderRadius.circular(10)),
       clipBehavior: Clip.hardEdge,
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is SearchInitial) {
             return const SizedBox();
+          }
+
+          if (state is SearchLoadedFromDB) {
+            return _cardList(state.translationList, true);
           }
 
           if (state is SearchLoading) {
@@ -107,30 +114,14 @@ class SearchScreen extends StatelessWidget {
           }
 
           if (state is SearchSuccess) {
-            var translationList = state.result;
+            var translationList = state.translationList;
             if (translationList.isEmpty) {
               return const Align(
                   alignment: Alignment.topCenter,
                   child: Text("Word is not found"));
             }
 
-            return ListView.separated(
-              itemCount: translationList.length,
-              itemBuilder: (context, index) {
-                var translation = translationList[index];
-
-                return GestureDetector(
-                    // onTap: () => context.go("/details/$keyWord"),
-                    onTap: () => _launchBrowser(context, translation.word),
-                    child: _translationItem(translation));
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                // return const Divider(
-                //   height: 1,
-                // );
-                return const SizedBox(height: 10,);
-              },
-            );
+            return _cardList(translationList, false);
           }
 
           return const SizedBox();
@@ -139,7 +130,30 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Widget _translationItem(Translation translation) {
+  ListView _cardList(List<Translation> translationList, bool isOfflineList) {
+    return ListView.separated(
+      itemCount: translationList.length,
+      itemBuilder: (context, index) {
+        var translation = translationList[index];
+
+        return GestureDetector(
+            // onTap: () => context.go("/details/$keyWord"),
+            onTap: () => _launchBrowser(context, translation.word),
+            child: _translationItem(context, translation, isOfflineList));
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        // return const Divider(
+        //   height: 1,
+        // );
+        return const SizedBox(
+          height: 10,
+        );
+      },
+    );
+  }
+
+  Widget _translationItem(
+      BuildContext context, Translation translation, bool isOfflineList) {
     var word = translation.word;
     var translated = translation.translated;
 
@@ -150,18 +164,45 @@ class SearchScreen extends StatelessWidget {
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: RichText(
-          text: TextSpan(children: [
-            TextSpan(
-                text: "$word ",
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 18)),
-            TextSpan(
-                text: translated,
-                style: const TextStyle(color: Colors.black, fontSize: 18)),
-          ]),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 270,
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                      text: "$word ",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 18)),
+                  TextSpan(
+                      text: translated,
+                      style:
+                          const TextStyle(color: Colors.black, fontSize: 18)),
+                ]),
+              ),
+            ),
+            Center(
+              child: GestureDetector(
+                  onTap: () {
+                    if (isOfflineList) {
+                      context
+                          .read<SearchBloc>()
+                          .add(DeleteWordSearchEvent(translation.id!));
+                    } else {
+                      context
+                          .read<SearchBloc>()
+                          .add(SaveWordSearchEvent(translation));
+                    }
+                  },
+                  child: Icon(
+                    isOfflineList ? Icons.delete : Icons.save,
+                    size: 30,
+                  )),
+            )
+          ],
         ),
       ),
     );

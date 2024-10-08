@@ -17,15 +17,17 @@ final router = GoRouter(initialLocation: "/splash", routes: [
 _buildSearchScreen() {
   return CustomTransitionPage(
       child: BlocProvider(
-        create: (context) => SearchBloc(),
+        create: (context) =>
+        SearchBloc()..add(LoadFromDBSearchEvent()),
         child: SearchScreen(),
       ),
+      transitionDuration: const Duration(milliseconds: 700),
       transitionsBuilder: (BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation, Widget child) {
 
         const begin = Offset(1.0, 0.0);
         const end = Offset(0.0, 0.0);
-        const curve = Curves.linear;
+        const curve = Curves.ease;
 
         var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         var offsetAnimation = animation.drive(tween);

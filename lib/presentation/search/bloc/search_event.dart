@@ -8,3 +8,16 @@ class WordSearchChangeEvent extends SearchEvent {
 
   final String word;
 }
+
+class SaveWordSearchEvent extends SearchEvent {
+  final Translation translation;
+
+  SaveWordSearchEvent(this.translation);
+}
+class DeleteWordSearchEvent extends SearchEvent {
+  final int id;
+
+  DeleteWordSearchEvent(this.id);
+}
+
+class LoadFromDBSearchEvent extends SearchEvent {}

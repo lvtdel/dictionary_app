@@ -5,12 +5,18 @@ sealed class SearchState {}
 
 final class SearchInitial extends SearchState {}
 
+final class SearchLoadedFromDB extends SearchState{
+  SearchLoadedFromDB(this.translationList);
+
+  final List<Translation> translationList;
+}
+
 final class SearchLoading extends SearchState {}
 
 final class SearchSuccess extends SearchState {
-  SearchSuccess(this.result);
+  SearchSuccess(this.translationList);
 
-  final List<Translation> result;
+  final List<Translation> translationList;
 }
 
 final class SearchFail extends SearchState {
